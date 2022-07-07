@@ -5,98 +5,87 @@
 #include <vector>
 
 using namespace std;
+vector<vector<int>> board = {
+    {0, 0, 0,/**/ 7, 0, 0,/**/ 0, 0, 0},
+    {0, 2, 0,/**/ 0, 0, 0,/**/ 0, 0, 9},
+    {0, 0, 8,/**/ 0, 0, 0,/**/ 2, 0, 4},
+    //----------------------------------
+    {0, 0, 6,/**/ 0, 4, 1,/**/ 0, 5, 0},
+    {2, 0, 0,/**/ 0, 6, 8,/**/ 4, 0, 0},
+    {0, 0, 0,/**/ 0, 0, 0,/**/ 0, 0, 0},
+    //----------------------------------
+    {0, 6, 0,/**/ 0, 0, 0,/**/ 0, 7, 0},
+    {0, 0, 5,/**/ 0, 1, 6,/**/ 0, 0, 0},
+    {0, 0, 0,/**/ 0, 3, 0,/**/ 9, 0, 8}
+};
 
-void solveSudoku(vector<vector<char>>& board);
-
-uint16_t groups[27];
-
-static constexpr uint16_t allBits() {
-    return (1 << 9) - 1;
+bool isPresentInCol(int col, int num) { //check whether num is present in col or not
+    for (int row = 0; row < 9; row++)
+        if (board[row][col] == num)
+            return true;
+    return false;
 }
-
-static constexpr uint16_t charToBit(char c) {
-    return 1 << (c - '1');
+bool isPresentInRow(int row, int num) { //check whether num is present in row or not
+    for (int col = 0; col < 9; col++)
+        if (board[row][col] == num)
+            return true;
+    return false;
 }
-
-inline uint16_t& row(int i) {
-    return groups[i];
-}
-
-inline uint16_t& col(int j) {
-    return groups[9 + j];
-}
-
-inline uint16_t& square(int i, int j) {
-    return groups[18 + 3 * (i / 3) + j / 3];
-}
-
-bool solveSudoku(vector<vector<int>>& board, int const i, int const j) {
-    if (i > 8 || j > 8) return true;
-
-    int& c = board[i][j];
-    uint16_t rowGroup = row(i);
-    uint16_t colGroup = col(j);
-    uint16_t squareGroup = square(i, j);
-    uint16_t possibleValues = '.' == c ? (allBits() & ~(rowGroup | colGroup | squareGroup)) : charToBit(c);
-    char     savedChar = c;
-
-    for (char nextC = '1'; nextC <= '9'; ++nextC) {
-        if (charToBit(nextC) & possibleValues) {
-            c = nextC;
-            row(i) |= charToBit(nextC);
-            col(j) |= charToBit(nextC);
-            square(i, j) |= charToBit(nextC);
-
-            int nextI = j == 8 ? i + 1 : i;
-            int nextJ = (1 + j) % 9;
-
-            if (solveSudoku(board, nextI, nextJ)) {
+bool isPresentInBox(int boxStartRow, int boxStartCol, int num) {
+    //check whether num is present in 3x3 box or not
+    for (int row = 0; row < 3; row++)
+        for (int col = 0; col < 3; col++)
+            if (board[row + boxStartRow][col + boxStartCol] == num)
                 return true;
-            }
-            else {
-                row(i) = rowGroup;
-                col(j) = colGroup;
-                square(i, j) = squareGroup;
-                c = savedChar;
-            }
+    return false;
+}
+
+bool findEmptyPlace(int& row, int& col) { //get empty location and update row and column
+    for (row = 0; row < 9; row++)
+        for (col = 0; col < 9; col++)
+            if (board[row][col] == 0) //marked with 0 is empty
+                return true;
+    return false;
+}
+bool isValidPlace(int row, int col, int num) {
+    //when item not found in col, row and current 3x3 box
+    return !isPresentInRow(row, num) && !isPresentInCol(col, num) && !isPresentInBox(row - row % 3,
+        col - col % 3, num);
+}
+bool solveSudoku() {
+    int row, col;
+    if (!findEmptyPlace(row, col))
+        return true; //when all places are filled
+    for (int num = 1; num <= 9; num++) { //valid numbers are 1 - 9
+        if (isValidPlace(row, col, num)) { //check validation, if yes, put the number in the grid
+            board[row][col] = num;
+            if (solveSudoku()) //recursively go for other rooms in the grid
+                return true;
+            board[row][col] = 0; //turn to unassigned space when conditions are not satisfied
         }
     }
     return false;
 }
 
-void solveSudoku(vector<vector<int>>& board) {
-    for (int i = 0; i < 9; ++i) {
-        vector<int> const& r = board[i];
-        for (int j = 0; j < 9; ++j) {
-            char const c = r[j];
-            if (c > 0 && c < 10) {
-                row(i) |= charToBit(c);
-                col(j) |= charToBit(c);
-                square(i, j) |= charToBit(c);
-            }
-        }
-    }
-    solveSudoku(board, 0, 0);
-}
 
 int main()
 {
-    vector<vector<int>> board;
+    //vector<vector<int>> board;
 
-    // Input data to board
-    for (int i = 0; i < 9; i++) {
-        vector<int> row;
-        for (int j = 0; j < 9; j++) {
-            int num;
-            cout << "Nhap matrix[" << i << "][" << j << "]: ";
-            cin >> num;
-            row.push_back(num);
-        }
-        board.push_back(row);
-    }
+    //// Input data to board
+    //for (int i = 0; i < 9; i++) {
+    //    vector<int> row;
+    //    for (int j = 0; j < 9; j++) {
+    //        int num;
+    //        cout << "Nhap matrix[" << i << "][" << j << "]: ";
+    //        cin >> num;
+    //        row.push_back(num);
+    //    }
+    //    board.push_back(row);
+    //}
 
     // solver
-    solveSudoku(board);
+    solveSudoku();
 
     // print output board
     for (int i = 0; i < 9; i++) {
