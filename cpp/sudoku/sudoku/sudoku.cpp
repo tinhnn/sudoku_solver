@@ -7,6 +7,12 @@
 #include <vector>
 
 using namespace std;
+
+#define SUDOKU_9X9   81
+#define SUDOKU_16X16 256
+
+//vector<vector<int>> board;
+int board_sz;
 vector<vector<int>> board = {
     {0, 0, 0,/**/ 8, 0, 0,/**/ 0, 0, 0},
     {0, 0, 5,/**/ 0, 0, 9,/**/ 7, 0, 0},
@@ -69,18 +75,44 @@ bool solveSudoku() {
     return false;
 }
 
+void getBoard(vector<vector<int>>& board) {
+    cout << "Nhap sudoku board: ";
+    bool isOK = false;
+    string tmpdata;
+    while (isOK != true) {
+        cin >> tmpdata;
+        int len = tmpdata.length();
+        if (len == SUDOKU_9X9 || len == SUDOKU_16X16) {
+            if (len == SUDOKU_9X9) {
+                // Sudoku 9x9
+                int idx = 0;
+                for (idx = 0; idx < SUDOKU_9X9; idx++) {
+                    int num = tmpdata.at(idx) - '0';
+                    if (num < 0 || num > 9) {
+                        cout << "Data board khong hop le!!!\nNhap sudoku board: ";
+                        break;
+                    }
+                    else {
+                        board[idx / 9][idx % 9] = num;
+                    }
+                }
+                if (idx == 81) isOK = true;
+            }
+            else {
+                // Sudoku 16x16
+                // TODO
+            }
+        }
+        else {
+            cout << "Kich thuoc board khong hop le!!!\nNhap sudoku board: ";
+        }
+    }
+}
+
 int main()
 {
     // Input data to board
-    for (int i = 0; i < 9; i++) {
-        //vector<int> row;
-        for (int j = 0; j < 9; j++) {
-            int num;
-            cout << "Nhap matrix[" << i << "][" << j << "]: ";
-            cin >> num;
-            board[i][j] = num;
-        }
-    }
+    getBoard(board);
 
     // solver
     solveSudoku();
@@ -89,8 +121,14 @@ int main()
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
             cout << board[i][j] << "    ";
+            if (j % 3 == 2) {
+                cout << "|";
+            }
         }
         cout << endl;
+        if (i % 3 == 2) {
+            cout << "---------------------------------------------" << endl;
+        }
     }
 
     int flag = getchar();
