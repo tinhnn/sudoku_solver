@@ -1,22 +1,24 @@
 // sudoku.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#include <fstream>
+#include <string>
 #include <iostream>
 #include <vector>
 
 using namespace std;
 vector<vector<int>> board = {
-    {0, 0, 0,/**/ 7, 0, 0,/**/ 0, 0, 0},
-    {0, 2, 0,/**/ 0, 0, 0,/**/ 0, 0, 9},
-    {0, 0, 8,/**/ 0, 0, 0,/**/ 2, 0, 4},
+    {0, 0, 0,/**/ 8, 0, 0,/**/ 0, 0, 0},
+    {0, 0, 5,/**/ 0, 0, 9,/**/ 7, 0, 0},
+    {0, 0, 0,/**/ 1, 0, 4,/**/ 0, 6, 9},
     //----------------------------------
-    {0, 0, 6,/**/ 0, 4, 1,/**/ 0, 5, 0},
-    {2, 0, 0,/**/ 0, 6, 8,/**/ 4, 0, 0},
-    {0, 0, 0,/**/ 0, 0, 0,/**/ 0, 0, 0},
+    {0, 0, 3,/**/ 0, 0, 5,/**/ 0, 0, 7},
+    {8, 0, 0,/**/ 9, 0, 1,/**/ 0, 4, 0},
+    {0, 9, 7,/**/ 0, 0, 0,/**/ 0, 0, 8},
     //----------------------------------
-    {0, 6, 0,/**/ 0, 0, 0,/**/ 0, 7, 0},
-    {0, 0, 5,/**/ 0, 1, 6,/**/ 0, 0, 0},
-    {0, 0, 0,/**/ 0, 3, 0,/**/ 9, 0, 8}
+    {1, 0, 0,/**/ 0, 0, 0,/**/ 0, 0, 0},
+    {7, 0, 0,/**/ 0, 6, 0,/**/ 0, 0, 0},
+    {0, 0, 0,/**/ 0, 0, 0,/**/ 0, 2, 0}
 };
 
 bool isPresentInCol(int col, int num) { //check whether num is present in col or not
@@ -67,22 +69,18 @@ bool solveSudoku() {
     return false;
 }
 
-
 int main()
 {
-    //vector<vector<int>> board;
-
-    //// Input data to board
-    //for (int i = 0; i < 9; i++) {
-    //    vector<int> row;
-    //    for (int j = 0; j < 9; j++) {
-    //        int num;
-    //        cout << "Nhap matrix[" << i << "][" << j << "]: ";
-    //        cin >> num;
-    //        row.push_back(num);
-    //    }
-    //    board.push_back(row);
-    //}
+    // Input data to board
+    for (int i = 0; i < 9; i++) {
+        //vector<int> row;
+        for (int j = 0; j < 9; j++) {
+            int num;
+            cout << "Nhap matrix[" << i << "][" << j << "]: ";
+            cin >> num;
+            board[i][j] = num;
+        }
+    }
 
     // solver
     solveSudoku();
@@ -95,5 +93,7 @@ int main()
         cout << endl;
     }
 
-    getchar();
+    int flag = getchar();
+    flag = getchar();
+    return flag;
 }
